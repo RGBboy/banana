@@ -1,7 +1,8 @@
 
-import Html exposing (Html, text, div, h2)
+import Html exposing (Html, text, div, h2, button)
 import Html.App exposing (beginnerProgram, map)
 import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 
 import Basic
 import OnChange
@@ -36,7 +37,8 @@ init =
 -- Update
 
 type Msg
-  = UpdateBasic Basic.Msg
+  = Reset
+  | UpdateBasic Basic.Msg
   | UpdateOnChange OnChange.Msg
   | UpdateOnFocus OnFocus.Msg
   | UpdateHybrid Hybrid.Msg
@@ -44,6 +46,7 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
   case msg of
+    Reset -> init
     UpdateBasic a ->
       { model | basic = Basic.update a model.basic }
     UpdateOnChange a ->
@@ -58,12 +61,24 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div [class "app"]
-    [ h2 [] [ text "Basic" ]
+    [ h2 []
+      [ text "Basic"
+      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+      ]
     , map UpdateBasic (Basic.view model.basic)
-    , h2 [] [ text "OnChange" ]
+    , h2 []
+      [ text "OnChange"
+      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+      ]
     , map UpdateOnChange (OnChange.view model.onChange)
-    , h2 [] [ text "OnFocus" ]
+    , h2 []
+      [ text "OnFocus"
+      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+      ]
     , map UpdateOnFocus (OnFocus.view model.onFocus)
-    , h2 [] [ text "Hybrid" ]
+    , h2 []
+      [ text "Hybrid"
+      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+      ]
     , map UpdateHybrid (Hybrid.view model.hybrid)
     ]
