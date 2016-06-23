@@ -1,111 +1,110 @@
 
+
 import Html exposing (Html, text, div, h2, button, hr)
-import Html.App exposing (beginnerProgram, map)
+import Html.App as App
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 
-import Basic
-import OnChange
+import Navigation exposing (Location, Parser, makeParser)
+
+import String
+
 import OnFocus
-import Hybrid
 import OnSubmit
-import OnSubmitHybrid
+
+
 
 main : Program Never
 main =
-  beginnerProgram
-    { model = init
-    , view = view
+  Navigation.program
+    parser
+    { init = init
+    , urlUpdate = urlUpdate
     , update = update
+    , subscriptions = subscriptions
+    , view = view
     }
 
 -- Model
 
 type alias Model =
-  { basic : Basic.Model
-  , onChange : OnChange.Model
+  { hash: String
   , onFocus : OnFocus.Model
-  , hybrid : Hybrid.Model
   , onSubmit : OnSubmit.Model
-  , onSubmitHybrid : OnSubmitHybrid.Model
   }
 
-init : Model
-init =
+initModel : String -> Model
+initModel hash =
   Model
-    Basic.init
-    OnChange.init
+    hash
     OnFocus.init
-    Hybrid.init
     OnSubmit.init
-    OnSubmitHybrid.init
+
+init : String -> (Model, Cmd Msg)
+init hash =
+  ( initModel hash
+  , Cmd.none
+  )
 
 -- Update
 
 type Msg
   = Reset
-  | UpdateBasic Basic.Msg
-  | UpdateOnChange OnChange.Msg
   | UpdateOnFocus OnFocus.Msg
-  | UpdateHybrid Hybrid.Msg
   | UpdateOnSubmit OnSubmit.Msg
-  | UpdateOnSubmitHybrid OnSubmitHybrid.Msg
 
-update : Msg -> Model -> Model
-update msg model =
+hash : Location -> String
+hash location =
+  String.dropLeft 1 location.hash
+
+parser : Parser String
+parser = makeParser hash
+
+urlUpdate : String -> Model -> (Model, Cmd Msg)
+urlUpdate hash model =
+  ( { model | hash = hash }
+  , Cmd.none
+  )
+
+updateModel : Msg -> Model -> Model
+updateModel msg model =
   case msg of
-    Reset -> init
-    UpdateBasic a ->
-      { model | basic = Basic.update a model.basic }
-    UpdateOnChange a ->
-      { model | onChange = OnChange.update a model.onChange }
+    Reset -> initModel model.hash
     UpdateOnFocus a ->
       { model | onFocus = OnFocus.update a model.onFocus }
-    UpdateHybrid a ->
-      { model | hybrid = Hybrid.update a model.hybrid }
     UpdateOnSubmit a ->
       { model | onSubmit = OnSubmit.update a model.onSubmit }
-    UpdateOnSubmitHybrid a ->
-      { model | onSubmitHybrid = OnSubmitHybrid.update a model.onSubmitHybrid }
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  (updateModel msg model, Cmd.none)
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Sub.none
 
 -- View
 
+
 view : Model -> Html Msg
 view model =
-  div [class "app"]
-    [ h2 []
-      [ text "Basic"
-      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+  if model.hash == "B" then
+    div [class "app"]
+      [ h2 []
+        [ text "B"
+        , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+        ]
+      , App.map UpdateOnFocus (OnFocus.view model.onFocus)
       ]
-    , map UpdateBasic (Basic.view model.basic)
-    , hr [] []
-    , h2 []
-      [ text "OnChange"
-      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+  else
+    div [class "app"]
+      [ h2 []
+        [ text "A"
+        , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+        ]
+      , App.map UpdateOnSubmit (OnSubmit.view model.onSubmit)
       ]
-    , map UpdateOnChange (OnChange.view model.onChange)
-    , hr [] []
-    , h2 []
-      [ text "OnFocus"
-      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
-      ]
-    , map UpdateOnFocus (OnFocus.view model.onFocus)
-    , hr [] []
-    , h2 []
-      [ text "Hybrid"
-      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
-      ]
-    , map UpdateHybrid (Hybrid.view model.hybrid)
-    , hr [] []
-    , h2 []
-      [ text "OnSubmit"
-      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
-      ]
-    , map UpdateOnSubmit (OnSubmit.view model.onSubmit)
-    , hr [] []
-    , h2 []
-      [ text "OnSubmit Hybrid"
-      , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
-      ]
-    , map UpdateOnSubmitHybrid (OnSubmitHybrid.view model.onSubmitHybrid)
-    ]

@@ -7,10 +7,10 @@ module OnFocus exposing
   )
 
 
-import Html exposing (Html, Attribute, text, div, input)
+import Html exposing (Html, Attribute, text, div, input, button)
 import Html.App exposing (beginnerProgram)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onInput, onBlur)
+import Html.Events exposing (onInput, onBlur, onClick)
 import List
 import String
 import Validation exposing (..)
@@ -43,11 +43,13 @@ init =
 -- Update
 
 type Msg
-  = UpdateFirstName FieldMsg
+  = Validate
+  | UpdateFirstName FieldMsg
   | UpdateLastName FieldMsg
 
 type FieldMsg
-  = Change String
+  = ValidateField
+  | Change String
   | Blur
 
 updateField : FieldMsg -> Field -> Field
@@ -60,10 +62,17 @@ updateField msg model =
       }
     Blur ->
       { model | focused = True }
+    ValidateField ->
+      { model | focused = True, touched = True }
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
+    Validate ->
+      { model
+      | firstName = updateField ValidateField model.firstName
+      , lastName = updateField ValidateField model.lastName
+      }
     UpdateFirstName a ->
       { model | firstName = updateField a model.firstName }
     UpdateLastName a ->
@@ -104,7 +113,10 @@ fieldView tagger ({ label, validation } as field) =
 
 view : Model -> Html Msg
 view { firstName, lastName } =
-  Html.form []
-    [ fieldView UpdateFirstName firstName
-    , fieldView UpdateLastName lastName
+  div []
+    [ Html.form []
+      [ fieldView UpdateFirstName firstName
+      , fieldView UpdateLastName lastName
+      ]
+    , button [class "btn btn-primary pull-right", onClick Validate] [text "Validate"]
     ]
