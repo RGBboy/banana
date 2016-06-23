@@ -7,115 +7,54 @@ module OnSubmit exposing
   )
 
 
-import Html exposing (Html, Attribute, text, div, input, button)
-import Html.App exposing (beginnerProgram)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onInput, onBlur, onClick)
-import List
-import String
-import Validation exposing (..)
-
+import Html exposing (Html)
+import Html.App as App
+import Field
 
 -- Model
 
-type alias Field =
-  { label : String
-  , touched : Bool
-  , focused : Bool
-  , validation : (Validation String String)
-  }
-
 type alias Model =
-  { firstName : Field
-  , lastName : Field
+  { firstName : Field.Model
+  , lastName : Field.Model
   }
-
-field : String -> Bool -> Bool -> String -> Field
-field name touched focused value =
-  Field name touched focused (validateName name value)
 
 init : Model
 init =
   Model
-    (field "First name" False False "")
-    (field "Surname" False False "")
+    (Field.init "First name")
+    (Field.init "Surname")
 
 -- Update
 
 type Msg
   = Validate
-  | UpdateFirstName FieldMsg
-  | UpdateLastName FieldMsg
-
-type FieldMsg
-  = Change String
-  | Blur
-
-updateField : FieldMsg -> Field -> Field
-updateField msg model =
-  case msg of
-    Change a ->
-      { model | validation = validateName model.label a }
-    Blur ->
-      { model
-      | focused = True
-      , touched = True
-      }
+  | UpdateFirstName Field.Msg
+  | UpdateLastName Field.Msg
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
     Validate ->
       { model
-      | firstName = updateField Blur model.firstName
-      , lastName = updateField Blur model.lastName
+      | firstName = Field.update Field.validate model.firstName
+      , lastName = Field.update Field.validate model.lastName
       }
     UpdateFirstName a ->
-      { model | firstName = updateField a model.firstName }
+      { model | firstName = Field.update a model.firstName }
     UpdateLastName a ->
-      { model | lastName = updateField a model.lastName }
+      { model | lastName = Field.update a model.lastName }
 
 -- View
 
-errorView : String -> Html Msg
-errorView message =
-  div [ class "help-block" ]
-    [ text message
-    ]
-
-formClass : Field -> String
-formClass { touched, focused, validation } =
-  if touched then
-    if focused && hasError validation then
-      "form-group has-error"
-    else if hasError validation then
-      "form-group"
-    else
-      "form-group has-success"
-  else
-    "form-group"
-
-messages : Field -> List (Html Msg)
-messages { touched, focused, validation } =
-  if touched && focused then
-    List.map errorView (validationErrors validation)
-  else
-    []
-
-fieldView : (FieldMsg -> Msg) -> Field -> Html Msg
-fieldView tagger ({ label, validation } as field) =
-  div [class (formClass field) ]
-    [ Html.label [ class "control-label" ] [ text label ]
-    , input [ class "form-control", onInput (Change >> tagger), value (validationValue validation) ] []
-    , div [] (messages field)
-    ]
-
 view : Model -> Html Msg
 view { firstName, lastName } =
-  div [class "clearfix"]
-    [ Html.form []
-      [ fieldView UpdateFirstName firstName
-      , fieldView UpdateLastName lastName
-      ]
-    , button [class "btn btn-primary pull-right", onClick Validate] [text "Validate"]
+  Field.form Validate
+    [ App.map UpdateFirstName
+        ( Field.fieldGroup firstName
+            (Field.input Field.noop firstName)
+        )
+    , App.map UpdateLastName
+        ( Field.fieldGroup lastName
+            (Field.input Field.noop lastName)
+        )
     ]
