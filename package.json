@@ -4,7 +4,7 @@
   "description": "",
   "author": "",
   "scripts": {
-    "start": "elm-live Main.elm --output=./client.js",
+    "start": "elm-live Main.elm --host=0.0.0.0 --output=./client.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

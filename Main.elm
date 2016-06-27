@@ -66,18 +66,28 @@ urlUpdate hash model =
   , Cmd.none
   )
 
-updateModel : Msg -> Model -> Model
-updateModel msg model =
-  case msg of
-    Reset -> initModel model.hash
-    UpdateOnFocus a ->
-      { model | onFocus = OnFocus.update a model.onFocus }
-    UpdateOnSubmit a ->
-      { model | onSubmit = OnSubmit.update a model.onSubmit }
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  (updateModel msg model, Cmd.none)
+  case msg of
+    Reset ->
+      ( initModel model.hash
+      , Cmd.none
+      )
+    UpdateOnFocus a ->
+      let
+        (newModel, cmd) = OnFocus.update a model.onFocus
+      in
+        ( { model | onFocus = newModel }
+        , cmd
+        )
+    UpdateOnSubmit a ->
+      let
+        (newModel, cmd) = OnSubmit.update a model.onSubmit
+      in
+        ( { model | onSubmit = newModel }
+        , cmd
+        )
 
 
 -- Subscriptions
@@ -96,7 +106,7 @@ view model =
     div [class "app"]
       [ h2 []
         [ text "B"
-        , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+        , button [ class "btn btn-default pull-right", onClick Reset ] [ text "Reset" ]
         ]
       , App.map UpdateOnFocus (OnFocus.view model.onFocus)
       ]
@@ -104,7 +114,7 @@ view model =
     div [class "app"]
       [ h2 []
         [ text "A"
-        , button [ class "btn btn-primary pull-right", onClick Reset ] [ text "Reset" ]
+        , button [ class "btn btn-default pull-right", onClick Reset ] [ text "Reset" ]
         ]
       , App.map UpdateOnSubmit (OnSubmit.view model.onSubmit)
       ]
