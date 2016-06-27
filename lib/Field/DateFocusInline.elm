@@ -115,7 +115,7 @@ view { id, value, focus } =
               (idAttribute "day" id)
               [ class "form-control-date"
               , style [ ("width", "2em") ]
-              , type' "number"
+              , type' "tel"
               , onInput (UpdateDay date)
               , onFocus (Focus True)
               , onBlur (Focus False)
@@ -129,7 +129,7 @@ view { id, value, focus } =
               (idAttribute "month" id)
               [ class "form-control-date"
               , style [ ("width", "2em") ]
-              , type' "number"
+              , type' "tel"
               , onInput (UpdateMonth date)
               , onFocus (Focus True)
               , onBlur (Focus False)
@@ -143,7 +143,7 @@ view { id, value, focus } =
               (idAttribute "year" id)
               [ class "form-control-date"
               , style [ ("width", "3em") ]
-              , type' "number"
+              , type' "tel"
               , onInput (UpdateYear date)
               , onFocus (Focus True)
               , onBlur (Focus False)

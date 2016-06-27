@@ -113,7 +113,7 @@ view { id, value, focus } =
               (idAttribute "day" id)
               [ class "form-control"
               , style [ ("width", "3em"), ("display", "inline"), ("padding", "6px"), ("text-align", "center" ) ]
-              , type' "number"
+              , type' "tel"
               , onInput (UpdateDay date)
               , A.value day
               ]
@@ -125,7 +125,7 @@ view { id, value, focus } =
               (idAttribute "month" id)
               [ class "form-control"
               , style [ ("width", "3em"), ("display", "inline"), ("padding", "6px"), ("text-align", "center" ) ]
-              , type' "number"
+              , type' "tel"
               , onInput (UpdateMonth date)
               , A.value month
               ]
@@ -137,7 +137,7 @@ view { id, value, focus } =
               (idAttribute "year" id)
               [ class "form-control"
               , style [ ("width", "5em"), ("display", "inline"), ("padding", "6px"), ("text-align", "center" ) ]
-              , type' "number"
+              , type' "tel"
               , onInput (UpdateYear date)
               , A.value year
               ]

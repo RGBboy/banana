@@ -150,7 +150,7 @@ view { submitted, title, firstName, lastName, companyName, telephone, date } =
           )
       , App.map UpdateTelephone
           ( FieldGroup.view telephone
-              (Input.view Field.blur telephone.value)
+              (Input.viewTelephone Field.blur telephone.value)
           )
       -- , FieldGroup.view date
       --     (Date.view UpdateDate date.value)

@@ -31,3 +31,14 @@ view blur value =
     , A.value value
     ]
     []
+
+viewTelephone : Field.Msg -> String -> Html Field.Msg
+viewTelephone blur value =
+  Html.input
+    [ class "form-control"
+    , onInput Field.Change
+    , type' "tel"
+    , onBlur blur
+    , A.value value
+    ]
+    []

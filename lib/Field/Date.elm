@@ -52,7 +52,7 @@ view change v =
       [ input
           [ class "form-control"
           , style [ ("width", "3em"), ("display", "inline"), ("padding", "6px"), ("text-align", "center" ) ]
-          , type' "number"
+          , type' "tel"
           , onInput (updateDay date >> change)
           , value day
           ]
@@ -61,7 +61,7 @@ view change v =
       , input
           [ class "form-control"
           , style [ ("width", "3em"), ("display", "inline"), ("padding", "6px"), ("text-align", "center" ) ]
-          , type' "number"
+          , type' "tel"
           , onInput (updateMonth date >> change)
           , value month
           ]
@@ -70,7 +70,7 @@ view change v =
       , input
           [ class "form-control"
           , style [ ("width", "5em"), ("display", "inline"), ("padding", "6px"), ("text-align", "center" ) ]
-          , type' "number"
+          , type' "tel"
           , onInput (updateYear date >> change)
           , value year
           ]
