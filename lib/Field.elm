@@ -57,7 +57,7 @@ update msg model =
       }
     Blur ->
       { model
-      | focused = True
+      | focused = (String.length model.value) > 0
       }
     Validate ->
       { model

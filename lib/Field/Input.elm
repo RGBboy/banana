@@ -17,6 +17,7 @@ viewSmall blur value =
     [ class "form-control"
     , style [ ("width", "25%") ]
     , onInput Field.Change
+    , type' "text"
     , onBlur blur
     , A.value value
     ]
@@ -27,6 +28,7 @@ view blur value =
   Html.input
     [ class "form-control"
     , onInput Field.Change
+    , type' "text"
     , onBlur blur
     , A.value value
     ]
